@@ -7,12 +7,18 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { NavLink } from "react-router-dom";
 import Table from "react-bootstrap/esm/Table";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const getData = useSelector((state) => state.cartreducer.carts);
+  console.log("Cart Data:", getData);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (getData.length > 0) {
+      setAnchorEl(event.currentTarget);
+    }
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -23,7 +29,7 @@ const Header = () => {
       <Navbar bg="dark" variant="dark" style={{ height: "60px" }}>
         <Container>
           <NavLink to="/" className="text-decoration-none text-light mx-3">
-         Spicy Heaven
+            Spicy Heaven
           </NavLink>
           <Nav className="me-auto">
             <NavLink to="/" className="text-decoration-none text-light">
@@ -32,7 +38,7 @@ const Header = () => {
           </Nav>
 
           <Badge
-            badgeContent={0}
+            badgeContent={getData.length}
             color="primary"
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
@@ -56,46 +62,71 @@ const Header = () => {
             "aria-labelledby": "basic-button",
           }}
         >
-          <div className="card_details" style={{ width: "24rem", padding: 10 }}>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Photo</th>
-                  <th>Restaurant Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <NavLink to="/cart/1" onClick={handleClose}>
-                      <img
-                        src="image_url"
-                        style={{ width: "5rem", height: "5rem" }}
-                        alt=""
-                      />
-                    </NavLink>
-                  </td>
-                  <td>
-                    <p>Restaurant Name</p>
-                    <p>Price : ₹0</p>
-                    <p>Quantity : 0</p>
-                    <p
-                      style={{ color: "red", fontSize: 20, cursor: "pointer" }}
-                    >
-                      <i className="fas fa-trash smalltrash"></i>
-                    </p>
-                  </td>
-                  <td
-                    className="mt-5"
-                    style={{ color: "red", fontSize: 20, cursor: "pointer" }}
-                  >
-                    <i className="fas fa-trash largetrash"></i>
-                  </td>
-                </tr>
-                <p className="text-center">Total : ₹0</p>
-              </tbody>
-            </Table>
-          </div>
+          {getData.length > 0 ? (
+            <div
+              className="card_details"
+              style={{ width: "24rem", padding: 10 }}
+            >
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Photo</th>
+                    <th>Restaurant Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getData.map((item, index) => (
+                    <tr key={index}>
+                      <td>
+                        <NavLink to={`/cart/${item.id}`} onClick={handleClose}>
+                          <img
+                            src={item.imgdata}
+                            style={{ width: "5rem", height: "5rem" }}
+                            alt={item.rname}
+                          />
+                        </NavLink>
+                      </td>
+                      <td>
+                        <p>{item.rname}</p>
+                        <p>Price: ₹{item.price}</p>
+                        <p>Quantity: {item.qnty}</p>
+                        <p
+                          style={{
+                            color: "red",
+                            fontSize: 20,
+                            cursor: "pointer",
+                          }}
+                        >
+                          <i className="fas fa-trash smalltrash"></i>
+                        </p>
+                      </td>
+                      <td
+                        className="mt-5"
+                        style={{
+                          color: "red",
+                          fontSize: 20,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <i className="fas fa-trash largetrash"></i>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              <p className="text-center">
+                Total: ₹
+                {getData.reduce((acc, item) => acc + item.price * item.qnty, 0)}
+              </p>
+            </div>
+          ) : (
+            <div
+              className="card_details d-flex justify-content-center align-items-center"
+              style={{ width: "24rem", padding: 10 }}
+            >
+              <p>Your cart is empty</p>
+            </div>
+          )}
         </Menu>
       </Navbar>
     </>
@@ -103,4 +134,3 @@ const Header = () => {
 };
 
 export default Header;
-

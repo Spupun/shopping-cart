@@ -4,6 +4,8 @@ import Header from "./componets/Header";
 import CardsDetails from "./componets/CardsDetails";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 function App() {
   return (
